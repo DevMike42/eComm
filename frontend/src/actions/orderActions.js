@@ -13,6 +13,7 @@ import {
   ORDER_LIST_MY_SUCCESS,
   ORDER_LIST_MY_FAIL
 } from '../constants/orderConstants'
+import { logout } from '../actions/userActions'
 
 export const createOrder = (order) => async (dispatch, getState) => {
   try {
@@ -40,11 +41,16 @@ export const createOrder = (order) => async (dispatch, getState) => {
       payload: data
     })
   } catch (error) {
-    dispatch({
-      type: ORDER_CREATE_FAIL,
-      payload: error.response && error.response.data.message
+    const message =
+      error.message && error.response.data.message
         ? error.response.data.message
         : error.message
+    if (message === 'Not authorized, token failed') {
+      dispatch(logout())
+    }
+    dispatch({
+      type: ORDER_CREATE_FAIL,
+      payload: message
     })
   }
 }
@@ -73,16 +79,24 @@ export const getOrderDetails = (id) => async (dispatch, getState) => {
       payload: data
     })
   } catch (error) {
-    dispatch({
-      type: ORDER_DETAILS_FAIL,
-      payload: error.response && error.response.data.message
+    const message =
+      error.response && error.response.data.message
         ? error.response.data.message
         : error.message
+    if (message === 'Not authorized, token failed') {
+      dispatch(logout())
+    }
+    dispatch({
+      type: ORDER_DETAILS_FAIL,
+      payload: message,
     })
   }
 }
 
-export const payOrder = (orderId, paymentResult) => async (dispatch, getState) => {
+export const payOrder = (orderId, paymentResult) => async (
+  dispatch,
+  getState
+) => {
   try {
     dispatch({
       type: ORDER_PAY_REQUEST
@@ -108,11 +122,16 @@ export const payOrder = (orderId, paymentResult) => async (dispatch, getState) =
       payload: data
     })
   } catch (error) {
-    dispatch({
-      type: ORDER_PAY_FAIL,
-      payload: error.response && error.response.data.message
+    const message =
+      error.response && error.response.data.message
         ? error.response.data.message
         : error.message
+    if (message === 'Not authorized, token failed') {
+      dispatch(logout())
+    }
+    dispatch({
+      type: ORDER_PAY_FAIL,
+      payload: message,
     })
   }
 }
@@ -141,11 +160,16 @@ export const listMyOrders = () => async (dispatch, getState) => {
       payload: data
     })
   } catch (error) {
-    dispatch({
-      type: ORDER_LIST_MY_FAIL,
-      payload: error.response && error.response.data.message
+    const message =
+      error.response && error.response.data.message
         ? error.response.data.message
         : error.message
+    if (message === 'Not authorized, token failed') {
+      dispatch(logout())
+    }
+    dispatch({
+      type: ORDER_LIST_MY_FAIL,
+      payload: message,
     })
   }
 }
